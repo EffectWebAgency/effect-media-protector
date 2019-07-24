@@ -64,24 +64,23 @@ add_action('init', function() {
     if (!empty($_GET['action']) && $_GET['action']=='load_attachment') {
         $file = $_GET['file'];
         global $wpdb;
-        $res = $wpdb->get_var('SELECT ID FROM ' . $wpdb->prefix . 'posts WHERE guid LIKE \'%' . $file . '\'');
-        
+
+         $res = $wpdb->get_var('SELECT ID FROM ' . $wpdb->prefix . 'posts WHERE guid LIKE \'%' . $file . '.%\'');
+
         if ($res) {
             
             $dir = wp_upload_dir();
-            $path = $dir['basedir']. $file;
+            $path = $dir['basedir'].'/'. $file.'.pdf';
             
             if (file_exists($path)) {
                 
                 
-                $protect = get_field('board_access_only', $res);
-                
+                $protect = get_field('protect_media', $res);
                 
                 if (!$protect) {
                     header("Content-type:application/pdf");
                     readfile($path);
                 } else {
-                    
                     if (is_user_logged_in()==true) {
                         header("Content-type:application/pdf");
                         readfile($path);
