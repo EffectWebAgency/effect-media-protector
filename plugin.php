@@ -3,7 +3,7 @@
 Plugin Name: Effect Media Protector
 Plugin URI: https://github.com/danloughmiller/effect-media-protector
 Description: 
-Version: 0.1.0
+Version: 0.1.1
 Author: Daniel Loughmiller
 Author URI: https://github.com/danloughmiller/
 Text Domain: effect-media-protector
@@ -65,9 +65,9 @@ add_action('init', function() {
         $file = $_GET['file'];
         global $wpdb;
 
-         $res = $wpdb->get_var('SELECT ID FROM ' . $wpdb->prefix . 'posts WHERE guid LIKE \'%' . $file . '.%\'');
+        $res = $wpdb->get_var('SELECT ID FROM ' . $wpdb->prefix . 'posts WHERE guid LIKE \'%' . $file . '.%\'');
 
-        if ($res) {
+        if (!empty($res)) {
             
             $dir = wp_upload_dir();
             $path = $dir['basedir'].'/'. $file.'.pdf';
@@ -93,6 +93,11 @@ add_action('init', function() {
                 exit;
                 
             }
+        } else {
+            $dir = wp_upload_dir();
+            $path = $dir['basedir'].'/'. $file.'.pdf';
+            header("Content-type:application/pdf");
+            readfile($path);
         }
     }
 });
